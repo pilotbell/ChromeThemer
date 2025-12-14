@@ -270,15 +270,14 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
     const gridA = el('div','grid');
     const inHex = input('seed-hex','text','#8a2be2'); const inColor = input('seed-color','color','#8a2be2'); const selVar = select('seed-variant');
     gridA.append(el('label',null,'Seed Hex'), inHex, el('label',null,'Color'), inColor, el('label',null,'Variant'), selVar);
-    const rowA = el('div','row'); const bApplySeed=btn('Apply Seed + Variant','btn primary'); const bOnlyVar=btn('Only Change Variant');
-    const stA = el('div','status'); stA.hidden=true; rowA.append(bApplySeed,bOnlyVar); cardA.append(gridA,rowA,stA);
+    const rowA = el('div','row'); const bApplySeed=btn('Apply Seed + Variant','btn primary');
+    const stA = el('div','status'); stA.hidden=true; rowA.append(bApplySeed); cardA.append(gridA,rowA,stA);
   
     const cardB = el('section','card'); cardB.append(el('h3',null,'Wallpaper'));
     const controlsB = el('div','row');
-    const inputFile = input('local-file','file',''); inputFile.accept='image/*';
-    const bUseSystem = btn('Set Local Image (System Picker)'); const bUseSelected = btn('Set Selected File (Best-effort)');
+    const bUseSystem = btn('Set Local Image (System Picker)');
     const bClear = btn('Clear Background'); const bDailyOn = btn('Daily Refresh: ON'); const bDailyOff = btn('Daily Refresh: OFF');
-    controlsB.append(inputFile,bUseSystem,bUseSelected,bClear,bDailyOn,bDailyOff);
+    controlsB.append(bUseSystem,bClear,bDailyOn,bDailyOff);
     const stB = el('div','status'); stB.hidden=true;
     const selectedBox = el('div','status','Choose a wallpaper tile below.'); selectedBox.hidden=false;
     const gridWrap = el('div','wall-grid');
@@ -362,10 +361,6 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
     bApplySeed.addEventListener('click', async ()=>{
       try{ show(stA,'Working…'); await window.chromeTheme.setSeed(inHex.value||'#8a2be2', selVar.value||'kTonalSpot'); show(stA,'Done'); }catch(e){ show(stA,'Error: '+(e?.message||e)); } finally{ setTimeout(()=>show(stA,''),1500); }
     });
-    bOnlyVar.addEventListener('click', async ()=>{
-      try{ show(stA,'Working…'); await window.chromeTheme.setVariant(selVar.value||'kTonalSpot'); show(stA,'Done'); }catch(e){ show(stA,'Error: '+(e?.message||e)); } finally{ setTimeout(()=>show(stA,''),1500); }
-    });
-  
     inFollow.addEventListener('change', async ()=>{
       try{ show(stC,'Updating…'); await window.chromeTheme.followDevice(!!inFollow.checked); show(stC,'OK'); }catch(e){ show(stC,'Error: '+(e?.message||e)); } finally{ setTimeout(()=>show(stC,''),1200); }
     });
@@ -465,23 +460,6 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
       catch (e) { console.error(e); show(stB,'Failed: '+(e?.message||e)); }
       finally { setTimeout(()=>show(stB,''),1500); }
     });
-  
-    bUseSelected.addEventListener('click', async ()=>{
-      const file = inputFile.files?.[0];
-      if (!file) { show(stB,'Pick a file first.'); setTimeout(()=>show(stB,''),1200); return; }
-      let url;
-      try {
-        show(stB,'Applying (best-effort)…');
-        url = URL.createObjectURL(file);
-        await H.setBackgroundImage('', '', {url:''}, {url}, {url}, '');
-        await H.updateTheme();
-        show(stB,'Applied (if allowed). If not, use System Picker.');
-      } catch (e) {
-        console.warn('Blob path blocked on this build.', e);
-        show(stB,'Blocked. Use “Set Local Image (System Picker)”.');
-      } finally { if (url) URL.revokeObjectURL(url); setTimeout(()=>show(stB,''),2000); }
-    });
-  
     bApplySelected.addEventListener('click', applySelectedDefault);
     bClear.addEventListener('click', async ()=>{
       try{ show(stB,'Clearing…'); await H.removeBackgroundImage(); await H.updateTheme(); show(stB,'Cleared.'); }catch(e){ show(stB,'Error: '+(e?.message||e)); } finally{ setTimeout(()=>show(stB,''),1200); }
@@ -512,7 +490,7 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
         (groups.get(key)||groups.set(key,[]).get(key)).push(a);
       }
       for(const [catId, items] of groups){
-        const catTitle=el('div','ctp-cat', catsById.get(catId)||'Other');
+        const catTitle=el('div','ctp-cat', catsById.get(catId));
         listE.appendChild(catTitle);
         for(const a of items){
           const item=el('div','ctp-item'); if(a.hasEnterpriseControlledPinnedState) item.setAttribute('aria-disabled','true');
