@@ -178,7 +178,7 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
         let s = typeof urlish === 'string' ? urlish : (urlish?.url || '');
         if (!s) return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
         if (s.startsWith('chrome://image/?')) return s;
-        return 'chrome://image/?' + s; // raw URL, no encodeURIComponent
+        return 'chrome://image/?' + s; 
       }
   
       window.chromeTheme = {
@@ -254,13 +254,45 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
     root.appendChild(style);
   
     const el = (t,c,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e; };
+    const elNS = (ns, t, props = {}) => {
+      const e = document.createElementNS(ns, t);
+      for (const key in props) {
+        if (props.hasOwnProperty(key)) {
+          e.setAttribute(key, props[key]);
+        }
+      }
+       return e;
+    };
     const input = (id,type='text',val='')=>{ const i=el('input','input'); i.id=id; i.type=type; if(val!==undefined) i.value=val; return i; };
     const select = id => el('select','select');
     const btn = (text, cls='btn') => el('button',cls,text);
   
     const app = el('div','app'); app.id='app';
     const header = el('header','header');
-    const brand = el('div','brand'); brand.append(el('div','logo'), el('div','title','ChromeThemer'));
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const XLINK_NS = 'http://www.w3.org/1999/xlink';
+    const svg = elNS(SVG_NS, 'svg', {viewBox:'0 0 48 48', height:'48', width:'48', class:'logo'});
+    svg.setAttribute('xmlns', SVG_NS);
+    svg.setAttribute('xmlns:xlink', XLINK_NS);
+    const defs = elNS(SVG_NS, 'defs');
+    const gradA = elNS(SVG_NS, 'linearGradient', {id:'a', x1:'3.2173', y1:'15', x2:'44.7812', y2:'15', gradientUnits:'userSpaceOnUse'});
+    gradA.appendChild(elNS(SVG_NS, 'stop', {offset:'0', 'stop-color':'#d93025'}));
+    gradA.appendChild(elNS(SVG_NS, 'stop', {offset:'1', 'stop-color':'#ea4335'}));
+    const gradB = elNS(SVG_NS, 'linearGradient', {id:'b', x1:'20.7219', y1:'47.6791', x2:'41.5039', y2:'11.6837', gradientUnits:'userSpaceOnUse'});
+    gradB.appendChild(elNS(SVG_NS, 'stop', {offset:'0', 'stop-color':'#fcc934'}));
+    gradB.appendChild(elNS(SVG_NS, 'stop', {offset:'1', 'stop-color':'#fbbc04'}));
+    const gradC = elNS(SVG_NS, 'linearGradient', {id:'c', x1:'26.5981', y1:'46.5015', x2:'5.8161', y2:'10.506', gradientUnits:'userSpaceOnUse'});
+    gradC.appendChild(elNS(SVG_NS, 'stop', {offset:'0', 'stop-color':'#1e8e3e'}));
+    gradC.appendChild(elNS(SVG_NS, 'stop', {offset:'1', 'stop-color':'#34a853'}));
+    defs.appendChild(gradA); defs.appendChild(gradB); defs.appendChild(gradC);
+    svg.appendChild(defs);
+    svg.appendChild(elNS(SVG_NS, 'circle', {cx:'24', cy:'23.9947', r:'12', style:'fill:#fff'}));
+    svg.appendChild(elNS(SVG_NS, 'path', {d:'M3.2154,36A24,24,0,1,0,12,3.2154,24,24,0,0,0,3.2154,36ZM34.3923,18A12,12,0,1,1,18,13.6077,12,12,0,0,1,34.3923,18Z', style:'fill:none'}));
+    svg.appendChild(elNS(SVG_NS, 'path', {d:'M24,12H44.7812a23.9939,23.9939,0,0,0-41.5639.0029L13.6079,30l.0093-.0024A11.9852,11.9852,0,0,1,24,12Z', style:'fill:url(#a)'}));
+    svg.appendChild(elNS(SVG_NS, 'circle', {cx:'24', cy:'24', r:'9.5', style:'fill:#1a73e8'}));
+    svg.appendChild(elNS(SVG_NS, 'path', {d:'M34.3913,30.0029,24.0007,48A23.994,23.994,0,0,0,44.78,12.0031H23.9989l-.0025.0093A11.985,11.985,0,0,1,34.3913,30.0029Z', style:'fill:url(#b)'}));
+    svg.appendChild(elNS(SVG_NS, 'path', {d:'M13.6086,30.0031,3.218,12.006A23.994,23.994,0,0,0,24.0025,48L34.3931,30.0029l-.0067-.0068a11.9852,11.9852,0,0,1-20.7778.007Z', style:'fill:url(#c)'}));
+    const brand = el('div','brand'); brand.append(svg, el('div','title','ChromeThemer'));
     const hdrActions = el('div','actions'); const bDumpTop = btn('Dump Theme'); hdrActions.append(bDumpTop);
     header.append(brand,hdrActions);
   
@@ -316,7 +348,7 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
       const head = document.createElement('button');
       head.className = 'card-head';
       head.type = 'button';
-      head.setAttribute('aria-expanded', 'false'); // default collapsed
+      head.setAttribute('aria-expanded', 'false'); 
   
       const chev = document.createElement('i'); chev.className = 'chev';
       const title = document.createElement('span'); title.className = 'title';
@@ -414,7 +446,7 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
           thumb.alt = img.attribution1 || img.attribution2 || 'wallpaper';
   
           const raw = u(img.previewImageUrl) || u(img.imageUrl);
-          thumb.src = window.chromeTheme.chromeImage(raw); // raw passthrough to chrome://image/?
+          thumb.src = window.chromeTheme.chromeImage(raw); 
   
           tile.appendChild(thumb);
           tile.addEventListener('click', ()=>{
