@@ -260,7 +260,7 @@ void (async function CHROME_THEME_SPA_MAIN_v4() {
   
     const app = el('div','app'); app.id='app';
     const header = el('header','header');
-    const brand = el('div','brand'); brand.append(el('div','logo'), el('div','title','Chrome Theme Toolkit'));
+    const brand = el('div','brand'); brand.append(el('div','logo'), el('div','title','ChromeThemer'));
     const hdrActions = el('div','actions'); const bDumpTop = btn('Dump Theme'); hdrActions.append(bDumpTop);
     header.append(brand,hdrActions);
   
