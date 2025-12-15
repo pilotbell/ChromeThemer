@@ -1,6 +1,6 @@
 # ChromeThemer
 
- ChromeThemer is an app that lets you directly modify the Material You (2) theme on Chrome. (as seen on images above)
+ ChromeThemer is an app that lets you directly modify the Material You (2) theme on Chrome. (as seen on images below)
 
 Why not just download a theme from the web store? Well, themes to this day still do have access to the Material You colors they still use the same system from even before the Chrome refresh 2023 update (yes, brave also had this update). Also, ChromeThemer lets the average user edit themes on the fly.
 
